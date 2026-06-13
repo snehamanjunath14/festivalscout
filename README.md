@@ -80,6 +80,3 @@ still render — clearly labeled in the UI.
 
 - No confidential information is used. All festival data comes from public official
 guidelines; each file carries a `source_url` and `last_verified` date.
-=======
-# festivalscout
->>>>>>> 5b5ff602cf79c5b3966ba679b1275ea375957883
