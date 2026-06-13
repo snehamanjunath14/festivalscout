@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FestivalScout — know exactly where your film can go</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='19' fill='none' stroke='%23e8a33d' stroke-width='3'/%3E%3Cpath d='M24 7 L28 24 L24 41 L20 24 Z' fill='%23e8a33d'/%3E%3Cpath d='M7 24 L24 20 L41 24 L24 28 Z' fill='%23c07f1d'/%3E%3Ccircle cx='24' cy='24' r='3.4' fill='%2314110f'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --screen: #14110f; --panel: #1e1915; --panel-2: #262019; --line: #3a3128;
+    --cream: #f5efe2; --cream-dim: #b7ad99; --amber: #e8a33d; --amber-deep: #c07f1d;
+    --ok: #7d9b6a; --warn: #d2913f; --bad: #b6483f; --muted: #6f6354; --radius: 12px;
+    --font-display: "Fraunces", serif; --font-body: "Archivo", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+  body { background: var(--screen); color: var(--cream); font-family: var(--font-body); line-height: 1.55; min-height: 100vh; }
+  .beam { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 60% 40% at 50% -6%, rgba(232,163,61,.14), transparent 60%); }
+  .wrap { position: relative; z-index: 1; max-width: 1020px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  /* ---------- brand + hero ---------- */
+  .brand { display: flex; align-items: center; gap: 11px; margin-bottom: 56px; }
+  .brand svg { width: 34px; height: 34px; display: block; }
+  .brand .word { font-family: var(--font-display); font-weight: 650; font-size: 20px; letter-spacing: -.01em; }
+  .brand .word b { color: var(--amber); font-weight: 650; }
+  .hero { margin-bottom: 30px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--amber); }
+  h1 { font-family: var(--font-display); font-weight: 650; font-size: clamp(40px, 6.5vw, 64px); letter-spacing: -0.015em; line-height: 1.02; margin-top: 14px; max-width: 16ch; }
+  h1 em { font-style: italic; color: var(--amber); }
+  .sub { color: var(--cream-dim); max-width: 60ch; margin-top: 18px; font-size: 17px; }
+
+  /* pipeline strip — frames the whole tool as one system */
+  .pipeline { display: flex; gap: 0; margin: 30px 0 46px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .pipeline .step { flex: 1; padding: 16px 18px; border-right: 1px solid var(--line); }
+  .pipeline .step:last-child { border-right: none; }
+  .pipeline .n { font-family: var(--font-mono); font-size: 11px; color: var(--amber); letter-spacing: .12em; }
+  .pipeline .t { font-family: var(--font-display); font-size: 16px; margin-top: 4px; }
+  .pipeline .d { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+  @media (max-width: 720px) { .pipeline { flex-direction: column; } .pipeline .step { border-right: none; border-bottom: 1px solid var(--line); } .pipeline .step:last-child { border-bottom: none; } }
+
+  /* ---------- panels ---------- */
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
+  .sheet-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px dashed var(--line); padding-bottom: 14px; margin-bottom: 22px; }
+  .sheet-head h2 { font-family: var(--font-display); font-size: 21px; font-weight: 650; }
+  .sheet-head span { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: .14em; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px 22px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--cream-dim); margin-bottom: 7px; }
+  input, select { width: 100%; background: var(--screen); color: var(--cream); border: 1px solid var(--line); border-radius: 7px; padding: 10px 12px; font-family: var(--font-body); font-size: 15px; }
+  input:focus-visible, select:focus-visible, button:focus-visible, .genre-chip:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .full { grid-column: 1 / -1; }
+  .genre-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .genre-chip { font-family: var(--font-body); font-size: 13px; padding: 7px 13px; border-radius: 18px; border: 1px solid var(--line); background: var(--screen); color: var(--cream-dim); cursor: pointer; transition: all .15s ease; }
+  .genre-chip[aria-pressed="true"] { background: var(--amber); color: #211703; border-color: var(--amber); font-weight: 600; }
+  .actions { margin-top: 26px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  button.go { font-family: var(--font-body); font-weight: 600; font-size: 15.5px; background: var(--amber); color: #211703; border: none; border-radius: 7px; padding: 12px 26px; cursor: pointer; transition: background .15s ease; }
+  button.go:hover { background: var(--amber-deep); }
+  button.go:disabled { background: var(--muted); cursor: wait; }
+  .hint { font-size: 13px; color: var(--muted); }
+
+  #loader { display: none; text-align: center; padding: 56px 0; }
+  #loader .count { font-family: var(--font-display); font-size: 84px; font-weight: 650; color: var(--amber); display: inline-block; width: 120px; height: 120px; line-height: 116px; border: 2px solid var(--line); border-radius: 50%; background: radial-gradient(circle, rgba(232,163,61,.08), transparent 70%); }
+  #loader p { margin-top: 14px; font-family: var(--font-mono); font-size: 13px; color: var(--cream-dim); }
+
+  #results { display: none; margin-top: 40px; }
+  .section-title { font-family: var(--font-mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--amber); margin: 40px 0 16px; display: flex; align-items: center; gap: 14px; }
+  .section-title .ix { color: var(--muted); }
+  .section-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  /* control strip */
+  .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+  .controls .lbl { font-size: 13px; color: var(--cream-dim); margin-right: 2px; }
+  .chip { font-family: var(--font-mono); font-size: 12px; padding: 7px 13px; border-radius: 20px; border: 1px solid var(--line); background: var(--screen); color: var(--cream-dim); cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--amber); color: #211703; border-color: var(--amber); font-weight: 500; }
+  .toolbar { margin-left: auto; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13.5px; background: transparent; color: var(--amber); border: 1px solid var(--amber-deep); border-radius: 7px; padding: 9px 15px; cursor: pointer; }
+  .btn-ghost:hover { background: rgba(232,163,61,.1); }
+
+  .strategy li { margin: 8px 0 8px 18px; color: var(--cream); }
+  .fees { font-family: var(--font-mono); color: var(--amber); margin-top: 14px; font-size: 14px; }
+
+  /* vertical timeline — no collisions */
+  .timeline { position: relative; padding-left: 30px; }
+  .timeline::before { content: ""; position: absolute; left: 9px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+  .tl-row { position: relative; padding: 9px 0; }
+  .tl-row .node { position: absolute; left: -25px; top: 13px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--panel); }
+  .tl-row .head { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  .tl-row .fest { font-family: var(--font-display); font-size: 16.5px; color: var(--cream); }
+  .tl-row .when { font-family: var(--font-mono); font-size: 12.5px; color: var(--cream-dim); }
+  .tl-row .days { font-family: var(--font-mono); font-size: 11px; color: var(--amber); }
+  .tl-row .info { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .tl-today { position: relative; padding: 0 0 6px; }
+  .tl-today .node { position: absolute; left: -25px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--amber); border: 2px solid var(--panel); }
+  .tl-today .lab { font-family: var(--font-mono); font-size: 11px; color: var(--amber); letter-spacing: .14em; }
+  .node.fit { background: var(--ok); } .node.caution { background: var(--warn); }
+  .node.closed, .node.not_eligible { background: var(--bad); } .node.unknown { background: var(--muted); }
+  .tl-empty { color: var(--muted); font-size: 14px; }
+
+  .cards { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 22px 20px; overflow: hidden; transition: border-color .2s ease; }
+  .card.changed { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber-deep) inset; }
+  .card h3 { font-family: var(--font-display); font-size: 18.5px; font-weight: 650; padding-right: 96px; line-height: 1.15; }
+  .card .loc { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  .stamp { position: absolute; top: 18px; right: 16px; transform: rotate(5deg); font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .1em; padding: 5px 9px; border: 2px solid currentColor; border-radius: 4px; text-transform: uppercase; opacity: .95; background: rgba(20,17,15,.6); max-width: 86px; text-align: center; }
+  .stamp.fit { color: var(--ok); } .stamp.caution { color: var(--warn); }
+  .stamp.not_eligible, .stamp.closed { color: var(--bad); } .stamp.unknown { color: var(--muted); }
+  .meta { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 10px; }
+  .meta div { font-family: var(--font-mono); font-size: 12px; color: var(--cream-dim); background: var(--panel-2); border: 1px solid var(--line); padding: 5px 9px; border-radius: 5px; }
+  .meta b { color: var(--cream); font-weight: 500; }
+  .card ul { margin: 10px 0 0 16px; font-size: 13.5px; color: var(--cream-dim); }
+  .card ul li { margin: 4px 0; } .card ul li.warn { color: var(--warn); }
+  .card a { display: inline-block; margin-top: 14px; color: var(--amber); font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--amber-deep); }
+
+  .agent { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: var(--radius); padding: 24px; white-space: pre-wrap; font-size: 15px; color: var(--cream); }
+  .mode-tag { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; margin-bottom: 14px; border: 1px solid var(--line); color: var(--cream-dim); }
+  .mode-tag.live { color: var(--ok); border-color: var(--ok); }
+  .verify { display: grid; gap: 10px; }
+  .verify .row { display: flex; gap: 12px; align-items: baseline; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; font-size: 13.5px; }
+  .verify .dot2 { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; min-width: 86px; }
+  .verify .dot2.v { color: var(--ok); } .verify .dot2.u { color: var(--warn); }
+  .verify .detail { color: var(--muted); }
+
+  .chat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .chat-log { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+  .bubble { padding: 12px 15px; border-radius: 10px; font-size: 14.5px; max-width: 90%; white-space: pre-wrap; }
+  .bubble.user { align-self: flex-end; background: var(--amber); color: #211703; }
+  .bubble.bot { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--line); color: var(--cream); }
+  .bubble.bot.thinking { color: var(--muted); font-style: italic; }
+  .chat-row { display: flex; gap: 10px; }
+  .chat-row input { flex: 1; }
+  .suggested { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .suggested button { font-family: var(--font-body); font-size: 12.5px; background: var(--screen); border: 1px solid var(--line); color: var(--cream-dim); border-radius: 16px; padding: 6px 12px; cursor: pointer; }
+  .suggested button:hover { border-color: var(--amber); color: var(--amber); }
+
+  #error { display: none; margin-top: 28px; background: rgba(182,72,63,.12); border: 1px solid var(--bad); border-radius: var(--radius); padding: 16px 20px; color: var(--cream); font-size: 14.5px; }
+  footer { margin-top: 72px; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="beam" aria-hidden="true"></div>
+<div class="wrap">
+
+  <div class="brand">
+    <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19" fill="none" stroke="#e8a33d" stroke-width="3"/><path d="M24 7 L28 24 L24 41 L20 24 Z" fill="#e8a33d"/><path d="M7 24 L24 20 L41 24 L24 28 Z" fill="#c07f1d"/><circle cx="24" cy="24" r="3.4" fill="#14110f"/></svg>
+    <span class="word">Festival<b>Scout</b></span>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">Festival submission strategy, reasoned</div>
+    <h1>Know exactly where your film can <em>go</em>.</h1>
+    <p class="sub">FestivalScout checks your film against real festival rules, does the deadline
+    and fee math in code, and catches the premiere conflicts that quietly disqualify films — so
+    every submission fee you pay actually counts.</p>
+  </div>
+
+  <div class="pipeline">
+    <div class="step"><div class="n">01 / COMPUTE</div><div class="t">Hard rules, in code</div><div class="d">Runtime, dates, premiere logic, and fees, checked deterministically.</div></div>
+    <div class="step"><div class="n">02 / GROUND</div><div class="t">Foundry IQ analysis</div><div class="d">A retrieval agent adds nuance from the real guidelines, with citations.</div></div>
+    <div class="step"><div class="n">03 / VERIFY</div><div class="t">Every number checked</div><div class="d">The agent's claims are cross-checked against the source data.</div></div>
+  </div>
+
+  <section class="panel" aria-labelledby="sheet-title">
+    <div class="sheet-head"><h2 id="sheet-title">Production call sheet</h2><span>FORM A — FILM PROFILE</span></div>
+    <form id="film-form">
+      <div class="grid">
+        <div><label for="title">Film title</label><input id="title" name="title" required placeholder="e.g., Monsoon Static" /></div>
+        <div><label for="runtime">Runtime (minutes)</label><input id="runtime" name="runtime" type="number" min="1" max="400" required value="12" /><span style="font-size:11.5px;color:var(--muted);font-family:var(--font-mono)">Under 40 = short · over 40 = feature</span></div>
+        <div><label for="completed">Completion date</label><input id="completed" name="completed" type="date" required value="2026-03-15" /></div>
+        <div><label for="premiere">Premiere status</label><select id="premiere" name="premiere"><option value="unscreened">Unscreened (premiere intact)</option><option value="online">Already released online</option><option value="festival">Already premiered at a festival</option></select></div>
+        <div class="full"><label>Genres (pick one or more)</label>
+          <div class="genre-chips" id="genre-chips">
+            <button type="button" class="genre-chip" aria-pressed="true" data-genre="drama">drama</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="comedy">comedy</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="romance">romance</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="horror">horror</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="sci-fi">sci-fi</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="fantasy">fantasy</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="thriller">thriller</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="documentary">documentary</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="animation">animation</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="experimental">experimental</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="musical">musical</button>
+            <button type="button" class="genre-chip" aria-pressed="false" data-genre="music video">music video</button>
+          </div>
+        </div>
+        <div><label for="budget">Submission fee budget (USD, optional)</label><input id="budget" name="budget" type="number" min="0" placeholder="e.g., 150" /></div>
+      </div>
+      <div class="actions"><button class="go" type="submit" id="go">Build my strategy</button><span class="hint">Checks run locally in code; analysis is grounded in the knowledge base.</span></div>
+    </form>
+  </section>
+
+  <div id="loader" role="status" aria-live="polite"><div class="count" id="count">3</div><p id="load-msg">Reading the guidelines…</p></div>
+  <div id="error"></div>
+
+  <section id="results">
+    <div class="controls">
+      <span class="lbl">What if the premiere status were:</span>
+      <button class="chip" data-status="unscreened" aria-pressed="true">Unscreened</button>
+      <button class="chip" data-status="online" aria-pressed="false">Released online</button>
+      <button class="chip" data-status="festival" aria-pressed="false">Premiered at a festival</button>
+      <div class="toolbar"><button class="btn-ghost" id="pdf-btn">Download plan (PDF)</button></div>
+    </div>
+
+    <div class="section-title"><span class="ix">01</span> Strategy</div>
+    <div class="panel strategy"><ul id="notes"></ul><div class="fees" id="fees"></div></div>
+
+    <div class="section-title"><span class="ix">02</span> Submission timeline</div>
+    <div class="panel"><div id="timeline" class="timeline"></div></div>
+
+    <div class="section-title"><span class="ix">03</span> Festival verdicts — computed in code</div>
+    <div class="cards" id="cards"></div>
+
+    <div class="section-title"><span class="ix">04</span> Agent analysis — grounded by Foundry IQ</div>
+    <div><span class="mode-tag" id="mode"></span><div class="agent" id="agent"></div></div>
+
+    <div class="section-title"><span class="ix">05</span> Verification pass</div>
+    <div class="verify" id="verify"></div>
+
+    <div class="section-title"><span class="ix">06</span> Ask FestivalScout</div>
+    <div class="chat">
+      <div class="suggested" id="suggested">
+        <button data-q="Why is my film not eligible for some of these festivals?">Why not eligible?</button>
+        <button data-q="Which festival gives me the best shot at an Oscar qualification?">Best Oscar odds?</button>
+        <button data-q="What should I submit to first to protect my premiere status?">Protect my premiere?</button>
+      </div>
+      <div class="chat-log" id="chat-log"></div>
+      <div class="chat-row"><input id="chat-input" placeholder="Ask about deadlines, eligibility, strategy…" /><button class="go" id="chat-send">Ask</button></div>
+    </div>
+  </section>
+
+  <footer>FestivalScout · Agents League 2026 · data verified 2026-06-13 against official sources.<br>Not legal or submission advice — always read each festival's own rules before paying a fee.</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const form = $("film-form"), loader = $("loader"), results = $("results"), errBox = $("error"), go = $("go");
+let baseFilm = null, baseVerdicts = null, currentData = null;
+const LOAD_MSGS = ["Reading the guidelines…","Running the date math…","Checking premiere conflicts…","Asking the knowledge base…","Verifying every claim…"];
+let loadTimer = null;
+function startLoader(){ results.style.display="none"; errBox.style.display="none"; loader.style.display="block"; let i=0,n=3; $("count").textContent=n; $("load-msg").textContent=LOAD_MSGS[0]; loadTimer=setInterval(()=>{n=n===1?3:n-1;i=(i+1)%LOAD_MSGS.length;$("count").textContent=n;$("load-msg").textContent=LOAD_MSGS[i];},1400); }
+function stopLoader(){ clearInterval(loadTimer); loader.style.display="none"; }
+const STAMP_TEXT={fit:"Fit",caution:"Caution",not_eligible:"Not eligible",closed:"Window closed",unknown:"Verify dates"};
+
+// genre multi-select
+document.querySelectorAll(".genre-chip").forEach(chip=>{
+  chip.addEventListener("click",()=>{ const on=chip.getAttribute("aria-pressed")==="true"; chip.setAttribute("aria-pressed", String(!on)); });
+});
+function selectedGenres(){ return [...document.querySelectorAll('.genre-chip[aria-pressed="true"]')].map(c=>c.dataset.genre); }
+
+function readForm(){
+  const budget=$("budget").value;
+  let genres=selectedGenres(); if(!genres.length) genres=["drama"];
+  return {title:$("title").value,runtime_minutes:parseInt($("runtime").value,10),completion_date:$("completed").value,premiere_status:$("premiere").value,genres,budget_usd:budget?parseFloat(budget):null};
+}
+
+form.addEventListener("submit", async (e)=>{
+  e.preventDefault(); go.disabled=true; startLoader(); baseFilm=readForm();
+  try {
+    const r=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(baseFilm)});
+    if(!r.ok) throw new Error("Server returned "+r.status);
+    const data=await r.json();
+    baseVerdicts={}; data.verdicts.forEach(v=>baseVerdicts[v.festival_id]=v.verdict);
+    document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.status===baseFilm.premiere_status)));
+    $("chat-log").innerHTML="";
+    render(data);
+  } catch(err){ errBox.textContent="Couldn't complete the analysis: "+err.message+". Check that the server is running and your .env is filled in, then try again."; errBox.style.display="block"; }
+  finally{ stopLoader(); go.disabled=false; }
+});
+
+document.querySelectorAll(".controls .chip").forEach(chip=>{
+  chip.addEventListener("click", async ()=>{
+    if(!baseFilm) return;
+    document.querySelectorAll(".controls .chip").forEach(c=>c.setAttribute("aria-pressed","false"));
+    chip.setAttribute("aria-pressed","true");
+    const film={...baseFilm,premiere_status:chip.dataset.status};
+    const r=await fetch("/api/whatif",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(film)});
+    const data=await r.json();
+    render(data, chip.dataset.status!==baseFilm.premiere_status);
+  });
+});
+
+function render(data,isWhatIf=false){
+  currentData=data;
+  const notes=$("notes"); notes.innerHTML="";
+  (data.strategy_notes.length?data.strategy_notes:["No open submission windows match this profile right now."]).forEach(n=>{const li=document.createElement("li");li.textContent=n;notes.appendChild(li);});
+  $("fees").textContent=data.total_estimated_fees_usd!=null?`Estimated total fees for open fits: ~$${data.total_estimated_fees_usd} USD`:"";
+  renderTimeline(data.verdicts);
+  renderCards(data.verdicts,isWhatIf);
+  if(!isWhatIf){
+    const mode=$("mode"),agent=$("agent");
+    if(data.agent_mode==="foundry_agent"){mode.textContent="Live · Foundry IQ knowledge base";mode.className="mode-tag live";}
+    else if(data.agent_mode==="fallback"){mode.textContent="Fallback · direct model, structured grounding";mode.className="mode-tag";}
+    else{mode.textContent="Agent unavailable";mode.className="mode-tag";}
+    agent.textContent=data.agent_analysis||"The reasoning agent could not be reached. The verdicts above are still valid — they are computed locally.";
+    const verify=$("verify"); verify.innerHTML="";
+    if(!data.verification.length) verify.innerHTML=`<div class="row"><span class="dot2 v">— </span><span>No checkable numeric claims in the agent's text.</span></div>`;
+    data.verification.forEach(item=>{const row=document.createElement("div");row.className="row";row.innerHTML=`<span class="dot2 ${item.status==="verified"?"v":"u"}">${item.status.toUpperCase()}</span><span>${item.claim}</span><span class="detail">${item.detail}</span>`;verify.appendChild(row);});
+  }
+  results.style.display="block";
+  if(!isWhatIf) results.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderCards(verdicts,isWhatIf){
+  const cards=$("cards"); cards.innerHTML="";
+  verdicts.forEach(v=>{
+    const c=document.createElement("div"); c.className="card";
+    if(isWhatIf && baseVerdicts && baseVerdicts[v.festival_id]!==v.verdict) c.classList.add("changed");
+    const nd=v.next_deadline;
+    const feeStr=nd?(nd.fee!=null?`${nd.fee} ${nd.currency}`:"see source"):"";
+    const dl=nd?`<div>Deadline <b>${nd.date}</b> (${nd.days_remaining}d)</div><div>Fee <b>${feeStr}</b></div>`:"";
+    c.innerHTML=`<span class="stamp ${v.verdict}">${STAMP_TEXT[v.verdict]}</span><h3>${v.festival_name}</h3><div class="loc">${v.location} · ${v.film_format}${v.oscar_qualifying?" · Oscar-qualifying":""}</div><div class="meta">${dl}<div>${v.platform}</div></div><ul>${v.reasons.map(r=>`<li>${r}</li>`).join("")}${v.warnings.map(w=>`<li class="warn">${w}</li>`).join("")}</ul><a href="${v.source_url}" target="_blank" rel="noopener">Official guidelines ↗</a>`;
+    cards.appendChild(c);
+  });
+}
+
+function renderTimeline(verdicts){
+  const tl=$("timeline"); tl.innerHTML="";
+  const open=verdicts.filter(v=>v.next_deadline).map(v=>({name:v.festival_name,date:v.next_deadline.date,days:v.next_deadline.days_remaining,verdict:v.verdict,fee:v.next_deadline.fee,cur:v.next_deadline.currency,label:v.next_deadline.label}));
+  if(!open.length){ tl.innerHTML=`<div class="tl-empty">No upcoming deadlines among these festivals for this profile. Try the what-if toggle, or check back when new cycles open.</div>`; return; }
+  open.sort((a,b)=>a.days-b.days);
+  const today=document.createElement("div"); today.className="tl-today"; today.innerHTML=`<span class="node"></span><span class="lab">TODAY</span>`; tl.appendChild(today);
+  open.forEach(o=>{
+    const fee=o.fee!=null?`${o.fee} ${o.cur}`:"fee: see source";
+    const row=document.createElement("div"); row.className="tl-row";
+    row.innerHTML=`<span class="node ${o.verdict}"></span><div class="head"><span class="fest">${o.name}</span><span class="when">${o.date}</span><span class="days">${o.days} days away</span></div><div class="info">${o.label} · ${fee} · ${STAMP_TEXT[o.verdict]}</div>`;
+    tl.appendChild(row);
+  });
+}
+
+$("pdf-btn").addEventListener("click", async ()=>{
+  if(!currentData) return;
+  const r=await fetch("/api/export-pdf",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(currentData)});
+  if(!r.ok){ alert("PDF export failed. Is the server running?"); return; }
+  const blob=await r.blob(); const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=`FestivalScout_${(currentData.film.title||"strategy").replace(/\s+/g,"_")}.pdf`;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+
+async function sendChat(question){
+  if(!question.trim()) return;
+  const log=$("chat-log");
+  const u=document.createElement("div"); u.className="bubble user"; u.textContent=question; log.appendChild(u);
+  const b=document.createElement("div"); b.className="bubble bot thinking"; b.textContent="Checking the guidelines…"; log.appendChild(b);
+  log.scrollTop=log.scrollHeight;
+  const ctx=baseFilm?JSON.stringify(baseFilm):"";
+  try{
+    const r=await fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question,film_context:ctx})});
+    const data=await r.json(); b.classList.remove("thinking");
+    b.textContent=data.answer||"I couldn't reach the knowledge base just now. Try again, or check the verdicts above which are computed locally.";
+  }catch(e){ b.classList.remove("thinking"); b.textContent="Something went wrong reaching the assistant."; }
+  log.scrollTop=log.scrollHeight;
+}
+$("chat-send").addEventListener("click",()=>{const i=$("chat-input");sendChat(i.value);i.value="";});
+$("chat-input").addEventListener("keydown",(e)=>{if(e.key==="Enter"){sendChat(e.target.value);e.target.value="";}});
+document.querySelectorAll("#suggested button").forEach(btn=>btn.addEventListener("click",()=>sendChat(btn.dataset.q)));
+</script>
+</body>
+</html>

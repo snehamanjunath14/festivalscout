@@ -1,0 +1,346 @@
+{
+  "festivals": [
+    {
+      "id": "sundance",
+      "name": "Sundance Film Festival (Shorts)",
+      "location": "Park City, Utah, USA",
+      "film_format": "short",
+      "runtime_min_minutes": 1,
+      "runtime_max_minutes": 49,
+      "completed_after": null,
+      "premiere": {
+        "policy": "date_sensitive",
+        "completion_exempt_after": "2025-12-31",
+        "note": "Films completed after Dec 31, 2025 are eligible regardless of premiere status; films made publicly available before Jan 1, 2026 are not."
+      },
+      "deadlines": [
+        {
+          "label": "Regular (2027 festival)",
+          "date": "2026-07-13",
+          "fee": 55,
+          "currency": "USD"
+        }
+      ],
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/Sundance"
+    },
+    {
+      "id": "clermont-ferrand",
+      "name": "Clermont-Ferrand International Short Film Festival",
+      "location": "Clermont-Ferrand, France",
+      "film_format": "short",
+      "runtime_min_minutes": 1,
+      "runtime_max_minutes": 40,
+      "completed_after": "2025-10-01",
+      "premiere": {
+        "policy": "none",
+        "note": "No premiere requirement; unscreened films get special attention."
+      },
+      "deadlines": [
+        {
+          "label": "Films completed Oct-Dec 2025",
+          "date": "2026-07-09",
+          "fee": 13,
+          "currency": "EUR",
+          "fee_note": "13 euros + 1 ShortFilmDepot stamp"
+        },
+        {
+          "label": "Films produced in 2025",
+          "date": "2026-09-24",
+          "fee": 13,
+          "currency": "EUR",
+          "fee_note": "13 euros + 1 ShortFilmDepot stamp"
+        }
+      ],
+      "oscar_qualifying": true,
+      "platform": "ShortFilmDepot",
+      "source_url": "https://www.lecourt-clermont.org/en/pros/submit-a-film/"
+    },
+    {
+      "id": "palm-springs",
+      "name": "Palm Springs International ShortFest",
+      "location": "Palm Springs, California, USA",
+      "film_format": "short",
+      "runtime_min_minutes": 1,
+      "runtime_max_minutes": 40,
+      "completed_in_years": [
+        2025,
+        2026
+      ],
+      "premiere": {
+        "policy": "none",
+        "note": "No premiere requirement; films already shown online or on broadcast TV are limited to the Online Film Festival category."
+      },
+      "deadlines": [],
+      "deadline_note": "2027-cycle deadlines not yet announced; early bird fees historically start around $45.",
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/PalmSpringsInternationalShortFest"
+    },
+    {
+      "id": "slamdance",
+      "name": "Slamdance Film Festival (Shorts)",
+      "location": "Los Angeles, California, USA",
+      "film_format": "short",
+      "runtime_min_minutes": 1,
+      "runtime_max_minutes": 39,
+      "premiere": {
+        "policy": "none",
+        "note": "No premiere requirement and no distribution restriction for shorts."
+      },
+      "deadlines": [
+        {
+          "label": "Earlybird",
+          "date": "2026-07-06",
+          "fee": 50,
+          "currency": "USD"
+        },
+        {
+          "label": "Regular",
+          "date": "2026-08-10",
+          "fee": 60,
+          "currency": "USD"
+        },
+        {
+          "label": "Late",
+          "date": "2026-09-14",
+          "fee": 70,
+          "currency": "USD"
+        },
+        {
+          "label": "Extended (final)",
+          "date": "2026-10-06",
+          "fee": 90,
+          "currency": "USD"
+        }
+      ],
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway",
+      "source_url": "https://slamdance.com/festival-submit/"
+    },
+    {
+      "id": "afi-fest",
+      "name": "AFI FEST (Shorts)",
+      "location": "Los Angeles, California, USA",
+      "film_format": "short",
+      "runtime_min_minutes": 1,
+      "runtime_max_minutes": 40,
+      "completed_after": "2025-10-01",
+      "premiere": {
+        "policy": "none",
+        "note": "No geographic premiere requirement for shorts. Features are invite/curated only and require an LA premiere."
+      },
+      "deadlines": [],
+      "deadline_note": "AFI FEST 2026 ran in late October; the early shorts deadline (around March 1) has passed. Verify the next cycle on FilmFreeway.",
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/AFIFEST"
+    },
+    {
+      "id": "tribeca-short",
+      "name": "Tribeca Festival (Shorts)",
+      "location": "New York City, USA",
+      "film_format": "short",
+      "runtime_min_minutes": 1,
+      "runtime_max_minutes": 39,
+      "premiere": {
+        "policy": "none",
+        "note": "Programmers place films in the most appropriate section; higher premiere status helps but is not strictly required for shorts."
+      },
+      "deadlines": [
+        {
+          "label": "Early (2026 cycle)",
+          "date": "2025-10-29",
+          "fee": 50,
+          "currency": "USD"
+        },
+        {
+          "label": "Official (2026 cycle)",
+          "date": "2025-12-03",
+          "fee": 60,
+          "currency": "USD"
+        },
+        {
+          "label": "Extended (2026 cycle)",
+          "date": "2026-02-04",
+          "fee": 75,
+          "currency": "USD"
+        }
+      ],
+      "deadline_note": "2026-cycle short deadlines have passed; 2027 dates not yet announced.",
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/TribecaFestival"
+    },
+    {
+      "id": "tribeca-feature",
+      "name": "Tribeca Festival (Features)",
+      "location": "New York City, USA",
+      "film_format": "feature",
+      "runtime_min_minutes": 41,
+      "runtime_max_minutes": null,
+      "premiere": {
+        "policy": "regional",
+        "region": "North American",
+        "note": "Features must be at least a North American premiere to be eligible for feature awards; a world premiere is prioritized, and the First Feature Award requires a world premiere. Projects cannot have been made publicly available before May 1, 2026."
+      },
+      "deadlines": [
+        {
+          "label": "Early (2026 cycle)",
+          "date": "2025-10-22",
+          "fee": 65,
+          "currency": "USD"
+        },
+        {
+          "label": "Official (2026 cycle)",
+          "date": "2025-11-19",
+          "fee": 85,
+          "currency": "USD"
+        },
+        {
+          "label": "Extended (2026 cycle)",
+          "date": "2025-12-17",
+          "fee": 110,
+          "currency": "USD"
+        }
+      ],
+      "deadline_note": "2026-cycle feature deadlines have passed; 2027 dates not yet announced. Fees are from the most recent published cycle; verify.",
+      "oscar_qualifying": false,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/TribecaFestival"
+    },
+    {
+      "id": "sxsw",
+      "name": "SXSW Film & TV Festival (Features)",
+      "location": "Austin, Texas, USA",
+      "film_format": "feature",
+      "runtime_min_minutes": 41,
+      "runtime_max_minutes": null,
+      "completed_in_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "premiere": {
+        "policy": "strict",
+        "note": "Feature must not have been released online anywhere, broadcast, or screened theatrically before SXSW. A higher premiere status is preferred. Completed 2024/2025 or on track for early 2026."
+      },
+      "deadlines": [],
+      "deadline_note": "2026-cycle deadlines closed Oct 1, 2025 (festival was March 12-18, 2026); 2027 dates not yet announced.",
+      "oscar_qualifying": false,
+      "platform": "SXSW website",
+      "source_url": "https://sxsw.com/apply/film-submissions/"
+    },
+    {
+      "id": "raindance",
+      "name": "Raindance Film Festival (Features)",
+      "location": "London, United Kingdom",
+      "film_format": "feature",
+      "runtime_min_minutes": 46,
+      "runtime_max_minutes": null,
+      "completed_after": "2026-01-01",
+      "premiere": {
+        "policy": "regional",
+        "region": "UK",
+        "note": "Feature films require a UK premiere (no public UK screening before the festival; private screenings are fine). Prioritizes first- and second-time filmmakers."
+      },
+      "deadlines": [
+        {
+          "label": "Early (2027 festival)",
+          "date": "2026-12-07",
+          "fee": null,
+          "currency": "GBP",
+          "fee_note": "Fee on FilmFreeway; Raindance Create members get one free submission/year."
+        },
+        {
+          "label": "Regular (2027 festival)",
+          "date": "2027-01-18",
+          "fee": null,
+          "currency": "GBP"
+        },
+        {
+          "label": "Final (2027 festival)",
+          "date": "2027-03-08",
+          "fee": null,
+          "currency": "GBP"
+        }
+      ],
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/Raindance"
+    },
+    {
+      "id": "fantastic-fest",
+      "name": "Fantastic Fest (Features)",
+      "location": "Austin, Texas, USA",
+      "film_format": "feature",
+      "runtime_min_minutes": 71,
+      "runtime_max_minutes": null,
+      "premiere": {
+        "policy": "regional",
+        "region": "U.S.",
+        "note": "New for 2026: all feature submissions must be a U.S. premiere or greater. Genre films only (horror, sci-fi, fantasy, and related). Films already available publicly online are not eligible."
+      },
+      "deadlines": [],
+      "deadline_note": "Exact 2026 deadlines not captured here; check FilmFreeway. Note eligibility rules changed for 2026.",
+      "oscar_qualifying": false,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/FantasticFest",
+      "genre_whitelist": [
+        "horror",
+        "sci-fi",
+        "fantasy",
+        "thriller"
+      ]
+    },
+    {
+      "id": "sitges",
+      "name": "Sitges International Fantastic Film Festival (Features)",
+      "location": "Sitges, Catalonia, Spain",
+      "film_format": "feature",
+      "runtime_min_minutes": 41,
+      "runtime_max_minutes": null,
+      "premiere": {
+        "policy": "none",
+        "note": "Fantastic-genre features (fiction, documentary, animated). FIAPF-accredited and Academy-recognized for its short film winners. Confirm any premiere expectations per section at the source."
+      },
+      "deadlines": [
+        {
+          "label": "Final (59th edition)",
+          "date": "2026-07-16",
+          "fee": null,
+          "currency": "EUR",
+          "fee_note": "Fee via FestHome/FilmFreeway; waivers via national institutions."
+        }
+      ],
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway / FestHome",
+      "source_url": "https://filmfreeway.com/SITGES-InternationalFantasticFilmFestivalofCatalonia",
+      "genre_whitelist": [
+        "horror",
+        "sci-fi",
+        "fantasy",
+        "thriller"
+      ]
+    },
+    {
+      "id": "austin-film-festival",
+      "name": "Austin Film Festival (Features)",
+      "location": "Austin, Texas, USA",
+      "film_format": "feature",
+      "runtime_min_minutes": 41,
+      "runtime_max_minutes": null,
+      "premiere": {
+        "policy": "regional",
+        "region": "Texas",
+        "note": "Features in competition cannot have played other Texas festivals or screened publicly in a Texas theater before the festival. Known as the 'Writers Festival'. Academy-recognized, Oscar-qualifying."
+      },
+      "deadlines": [],
+      "deadline_note": "Exact 2026 deadlines not captured here; verify on FilmFreeway. Festival is in late October/November.",
+      "oscar_qualifying": true,
+      "platform": "FilmFreeway",
+      "source_url": "https://filmfreeway.com/AustinFilmFestival"
+    }
+  ]
+}
