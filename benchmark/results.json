@@ -1,0 +1,17 @@
+{
+  "method": "fault_injection",
+  "seed": 42,
+  "responses": 200,
+  "numeric_errors_injected": 357,
+  "errors_caught": 207,
+  "errors_missed": 150,
+  "false_positives": 0,
+  "true_negatives": 646,
+  "recall": 0.5798,
+  "precision": 1.0,
+  "false_positive_rate": 0.0,
+  "hallucination_errors": 207,
+  "hallucination_recall": 1.0,
+  "wrong_context_errors": 150,
+  "wrong_context_recall": 0.0
+}

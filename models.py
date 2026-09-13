@@ -48,11 +48,23 @@ class VerificationItem(BaseModel):
     detail: str
 
 
+class Citation(BaseModel):
+    festival_id: str
+    festival_name: str
+    section: str
+    snippet: str
+    source_url: str
+    score: float
+
+
 class AnalysisResponse(BaseModel):
     film: FilmProfile
     verdicts: list[FestivalVerdict]
     strategy_notes: list[str]
     total_estimated_fees_usd: Optional[float]
     agent_analysis: Optional[str] = None
-    agent_mode: Literal["foundry_agent", "fallback", "unavailable"]
+    # local_rag: composed locally from retrieval; openai/azure: generative model;
+    # unavailable: deterministic-only (what-if endpoint).
+    agent_mode: Literal["local_rag", "openai", "azure", "unavailable"]
     verification: list[VerificationItem] = []
+    citations: list[Citation] = []

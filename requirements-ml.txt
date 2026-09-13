@@ -1,0 +1,4 @@
+# Optional: dense-embedding retrieval backend.
+# Install this, then set RETRIEVAL_BACKEND=dense to upgrade from the built-in
+# TF-IDF index to sentence-transformers embeddings (all-MiniLM-L6-v2 by default).
+sentence-transformers>=2.2
