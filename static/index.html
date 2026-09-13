@@ -118,6 +118,9 @@
   .agent { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: var(--radius); padding: 24px; white-space: pre-wrap; font-size: 15px; color: var(--cream); }
   .mode-tag { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; margin-bottom: 14px; border: 1px solid var(--line); color: var(--cream-dim); }
   .mode-tag.live { color: var(--ok); border-color: var(--ok); }
+  .citations { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .cite { font-family: var(--font-mono); font-size: 11px; text-decoration: none; padding: 4px 9px; border: 1px solid var(--line); border-radius: 4px; color: var(--cream-dim); }
+  .cite:hover { color: var(--amber); border-color: var(--amber); }
   .verify { display: grid; gap: 10px; }
   .verify .row { display: flex; gap: 12px; align-items: baseline; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; font-size: 13.5px; }
   .verify .dot2 { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; min-width: 86px; }
@@ -159,7 +162,7 @@
 
   <div class="pipeline">
     <div class="step"><div class="n">01 / COMPUTE</div><div class="t">Hard rules, in code</div><div class="d">Runtime, dates, premiere logic, and fees, checked deterministically.</div></div>
-    <div class="step"><div class="n">02 / GROUND</div><div class="t">Foundry IQ analysis</div><div class="d">A retrieval agent adds nuance from the real guidelines, with citations.</div></div>
+    <div class="step"><div class="n">02 / GROUND</div><div class="t">Local retrieval (RAG)</div><div class="d">A local vector index retrieves the real guidelines and cites them — no cloud required.</div></div>
     <div class="step"><div class="n">03 / VERIFY</div><div class="t">Every number checked</div><div class="d">The agent's claims are cross-checked against the source data.</div></div>
   </div>
 
@@ -214,8 +217,8 @@
     <div class="section-title"><span class="ix">03</span> Festival verdicts — computed in code</div>
     <div class="cards" id="cards"></div>
 
-    <div class="section-title"><span class="ix">04</span> Agent analysis — grounded by Foundry IQ</div>
-    <div><span class="mode-tag" id="mode"></span><div class="agent" id="agent"></div></div>
+    <div class="section-title"><span class="ix">04</span> Agent analysis — grounded by local retrieval</div>
+    <div><span class="mode-tag" id="mode"></span><div class="agent" id="agent"></div><div class="citations" id="citations"></div></div>
 
     <div class="section-title"><span class="ix">05</span> Verification pass</div>
     <div class="verify" id="verify"></div>
@@ -292,10 +295,13 @@ function render(data,isWhatIf=false){
   renderCards(data.verdicts,isWhatIf);
   if(!isWhatIf){
     const mode=$("mode"),agent=$("agent");
-    if(data.agent_mode==="foundry_agent"){mode.textContent="Live · Foundry IQ knowledge base";mode.className="mode-tag live";}
-    else if(data.agent_mode==="fallback"){mode.textContent="Fallback · direct model, structured grounding";mode.className="mode-tag";}
+    if(data.agent_mode==="local_rag"){mode.textContent="Local · retrieval-grounded synthesis";mode.className="mode-tag live";}
+    else if(data.agent_mode==="openai"){mode.textContent="Live · OpenAI-compatible model + retrieval";mode.className="mode-tag live";}
+    else if(data.agent_mode==="azure"){mode.textContent="Live · Azure OpenAI + retrieval";mode.className="mode-tag live";}
     else{mode.textContent="Agent unavailable";mode.className="mode-tag";}
     agent.textContent=data.agent_analysis||"The reasoning agent could not be reached. The verdicts above are still valid — they are computed locally.";
+    const cites=$("citations"); cites.innerHTML="";
+    (data.citations||[]).forEach(c=>{const a=document.createElement("a");a.className="cite";a.href=c.source_url;a.target="_blank";a.rel="noopener";a.textContent=`${c.festival_name} · ${c.section} ↗`;cites.appendChild(a);});
     const verify=$("verify"); verify.innerHTML="";
     if(!data.verification.length) verify.innerHTML=`<div class="row"><span class="dot2 v">— </span><span>No checkable numeric claims in the agent's text.</span></div>`;
     data.verification.forEach(item=>{const row=document.createElement("div");row.className="row";row.innerHTML=`<span class="dot2 ${item.status==="verified"?"v":"u"}">${item.status.toUpperCase()}</span><span>${item.claim}</span><span class="detail">${item.detail}</span>`;verify.appendChild(row);});

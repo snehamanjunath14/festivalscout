@@ -20,9 +20,9 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from constraints import evaluate_festival, load_festivals, strategy_notes
-from foundry_client import ask_agent, query_foundry_agent
 from models import AnalysisResponse, FilmProfile
 from pdf_export import build_strategy_pdf
+from reasoning import analyze_film, answer_question
 from verify import verify_agent_text
 
 app = FastAPI(title="FestivalScout", version="2.0")
@@ -57,15 +57,14 @@ def _deterministic(film: FilmProfile):
 def analyze(film: FilmProfile) -> AnalysisResponse:
     data, verdicts, notes, total = _deterministic(film)
 
-    film_json = film.model_dump_json(indent=2)
-    verdicts_json = "[" + ",".join(v.model_dump_json() for v in verdicts) + "]"
-    agent_text, mode = query_foundry_agent(film_json, verdicts_json)
+    verdict_dicts = [v.model_dump(mode="json") for v in verdicts]
+    agent_text, mode, citations = analyze_film(film.model_dump(mode="json"), verdict_dicts)
     verification = verify_agent_text(agent_text or "", data)
 
     return AnalysisResponse(
         film=film, verdicts=verdicts, strategy_notes=notes,
         total_estimated_fees_usd=total, agent_analysis=agent_text,
-        agent_mode=mode, verification=verification,
+        agent_mode=mode, verification=verification, citations=citations,
     )
 
 
@@ -87,8 +86,8 @@ class AskRequest(BaseModel):
 
 @app.post("/api/ask")
 def ask(req: AskRequest) -> dict:
-    answer, mode = ask_agent(req.question, req.film_context)
-    return {"answer": answer, "mode": mode}
+    answer, mode, citations = answer_question(req.question, req.film_context)
+    return {"answer": answer, "mode": mode, "citations": citations}
 
 
 @app.post("/api/export-pdf")

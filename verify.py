@@ -29,7 +29,10 @@ def _known_facts(festivals: list[dict]) -> tuple[set[int], set[date]]:
     dates: set[date] = set()
     for f in festivals:
         for d in f.get("deadlines", []):
-            fees.add(int(d["fee"]))
+            # Some festivals (Raindance, Sitges) publish no fixed fee: fee is null.
+            # Guard against int(None) so verification never crashes on the real data.
+            if d.get("fee") is not None:
+                fees.add(int(d["fee"]))
             dates.add(date.fromisoformat(d["date"]))
         prem = f.get("premiere", {})
         for key in ("public_availability_cutoff", "completion_exempt_after"):

@@ -110,7 +110,7 @@ def build_strategy_pdf(data: dict) -> bytes:
     story.append(table)
 
     if data.get("agent_analysis"):
-        story.append(Paragraph("Agent analysis (Foundry IQ)", h2))
+        story.append(Paragraph("Agent analysis (retrieval-grounded)", h2))
         for para in data["agent_analysis"].split("\n"):
             if para.strip():
                 story.append(Paragraph(para.strip().replace("<", "&lt;").replace(">", "&gt;"), body))
